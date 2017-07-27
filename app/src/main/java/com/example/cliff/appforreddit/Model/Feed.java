@@ -25,7 +25,8 @@ public class Feed implements Serializable {
     @Element(name = "id")
     private String id;
 
-    @Element(name = "logo")
+    // Some subreddit feeds do not have this tag
+    @Element(required = false, name = "logo")
     private String logo;
 
     @Element(name = "title")
@@ -34,7 +35,7 @@ public class Feed implements Serializable {
     @Element(name = "updated")
     private String updated;
 
-    @Element(name = "subtitle")
+    @Element(required = false, name = "subtitle")
     private String subtitle;
 
     // Declare the list of entries that need to be retrieved
