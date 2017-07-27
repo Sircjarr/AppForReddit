@@ -10,6 +10,9 @@ import java.util.List;
 // The Model package models the XML data pulled from the Reddit feed
 // This class will model the <feed> tag, which is the root tag
 
+// The RSS feed can be seen in a more readable format using https://codebeautify.org/xmlviewer/
+// The XML can be converted to HTML and beautified using https://codebeautify.org/htmlviewer/
+
 // By default, strict is set to true; which means that the data will not be retrieved
     // if every tag is not accounted for
 @Root(name = "feed", strict = false)

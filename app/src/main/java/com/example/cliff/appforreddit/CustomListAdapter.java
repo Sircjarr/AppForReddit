@@ -26,6 +26,8 @@ class CustomListAdapter extends ArrayAdapter<SubredditPost> {
 
     public CustomListAdapter(Context context, int resource, List<SubredditPost> objects) {
         super(context, resource, objects);
+
+        // MainActivity is passed into this context
         mContext = context;
         mResource = resource;
     }
@@ -77,24 +79,34 @@ class CustomListAdapter extends ArrayAdapter<SubredditPost> {
         holder.author.setText(author);
         holder.updated.setText(updated);
 
-        // Use Picasso to load in the image
+        // Retrieve the placeholder image
         int placeholder = mContext.getResources().getIdentifier("@drawable/placeholder", null, mContext.getPackageName());
-        Picasso.with(mContext)
-                .load(imgURL)
-                .placeholder(placeholder)
-                //.resize(50, 50)
-                //.centerCrop()
-                .into(holder.image, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        holder.progressBar.setVisibility(View.INVISIBLE);
-                    }
 
-                    @Override
-                    public void onError() {
-                        holder.progressBar.setVisibility(View.INVISIBLE);
-                    }
-                });
+        // Use Picasso to load the image
+        if (imgURL == null) {
+            holder.image.setImageResource(placeholder);
+            holder.progressBar.setVisibility(View.GONE);
+        }
+        else {
+            Picasso.with(mContext)
+                    .load(imgURL)
+                    .placeholder(placeholder)
+                    .error(placeholder)
+                    //.resize(50, 50)
+                    //.centerCrop()
+                    .into(holder.image, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            holder.progressBar.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onError() {
+                            holder.progressBar.setVisibility(View.GONE);
+                        }
+                    });
+        }
+
 
         return convertView;
     }

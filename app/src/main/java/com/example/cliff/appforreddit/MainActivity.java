@@ -42,12 +42,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void refreshFeed(View view) {
+        // Hide keyboard
         InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         mgr.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
+        // Get and handle the input text
         currentFeed = feedEditText.getText().toString();
-        if (currentFeed.trim().length() > 0) {
+        currentFeed = currentFeed.replaceAll("\\s", "");
+        if (!currentFeed.equals("")) {
             init();
+        }
+        else {
+            Toast.makeText(this, "Enter a subreddit!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -68,10 +74,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<Feed> call, @NonNull Response<Feed> response) {
 
+                List<Entry> entries;
                 final List<SubredditPost> posts = new ArrayList<>();
 
-                // Retrieve all the entries within <feed>
-                List<Entry> entries = response.body().getEntryList();
+                try {
+                    // Retrieve all the entries within <feed>
+                    entries = response.body().getEntryList();
+                }
+                catch(NullPointerException e) {
+                    Log.i(TAG, "onResponse: " + e.getMessage());
+                    Toast.makeText(MainActivity.this, "Subreddit not found", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
                 /* TEST: See if the Model is correctly structured
                 Log.i(TAG, "onResponse: Server response: " + response.toString());
@@ -152,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call<Feed> call, @NonNull Throwable t) {
                 Log.i(TAG, "Unable to retrieve RSS " + t.getMessage());
-                Toast.makeText(MainActivity.this, "Error getting the RSS", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Subreddit not found", Toast.LENGTH_LONG).show();
             }
         });
     }
